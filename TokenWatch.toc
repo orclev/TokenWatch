@@ -1,0 +1,11 @@
+## Interface: 60000
+## Title: Token Watch
+## Notes: LDB feed that displays the current market price of gold
+## Author: Orclev
+## Version: 0.1
+
+LibStub.lua
+
+LibDataBroker-1.1.lua
+
+TokenWatch.lua
