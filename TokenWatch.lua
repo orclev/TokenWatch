@@ -16,6 +16,10 @@ local function partial(f, ...)
 	end
 end
 
+local function RequestNewPrice()
+	C_WowTokenPublic.UpdateMarketPrice();
+end
+
 local function UpdateTooltip(self, tooltip)
 	tooltip:AddLine(format("|cFFFFFFFFMarket Watch|r"));
 	if (self.marketPriceAvailable) then
@@ -25,9 +29,12 @@ local function UpdateTooltip(self, tooltip)
 	else
 		tooltip:AddLine(format("|cFFFFFFFFNo Market Data Currently Available|r"));
 	end
+	tooltip:AddLine();
+	tooltip:AddLine("|cFFFFFFFFPrice automatically refreshed every 5 minutes|r");
+	tooltip:AddLine("|cFFFFFFFFClick to force fetch of current market price|r");
 end
 
-local datamarket = lib:NewDataObject("Token Watch", { type = "data source", text = inactiveText, icon = tokenIcon2, OnTooltipShow = partial(UpdateTooltip, market) });
+local datamarket = lib:NewDataObject("Token Watch", { type = "data source", text = inactiveText, icon = tokenIcon2, OnTooltipShow = partial(UpdateTooltip, market), OnClick = RequestNewPrice });
 
 local function MarketPriceUpdated(self, event, ...)
 	if event == "TOKEN_MARKET_PRICE_UPDATED" then
@@ -68,7 +75,7 @@ market.displayNeedsUpdate = true;
 market:SetScript("OnUpdate", UpdateDisplay);
 market:SetScript("OnEvent", MarketPriceUpdated);
 market:RegisterEvent("TOKEN_MARKET_PRICE_UPDATED");
-market.timer = C_Timer.NewTicker(60, function()
-	C_WowTokenPublic.UpdateMarketPrice(); -- Update once every 5 minutes
+market.timer = C_Timer.NewTicker(5*60, function()
+	RequestNewPrice(); -- Update once every 5 minutes
 end)
 C_WowTokenPublic.UpdateMarketPrice();
